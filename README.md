@@ -1,0 +1,2 @@
+# kdbg
+kubernetes debugging container
