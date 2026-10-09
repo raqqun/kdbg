@@ -78,12 +78,26 @@ docker run --rm -it ghcr.io/raqqun/kdbg bash
 
 ## Image tags
 
-| Tag | What it is |
-| --- | --- |
-| `latest` | Built from the latest commit on `master` |
-| `vX.Y.Z` | Built when a git tag of that form (e.g. `v1.2.3`) is pushed. Other tag names are not built. |
+Image versions follow `kubectl` versions. There is one image for each of the
+three newest Kubernetes minor versions, so you can pick the one that matches
+your cluster. `kubectl` is only guaranteed to work with clusters within one
+minor version of itself.
 
-Use a specific tag if you need the image to stay the same over time.
+| Tag | What it is | Example |
+| --- | --- | --- |
+| `<major>.<minor>` | The latest patch release of that minor version | `1.36` |
+| `<major>.<minor>.<patch>` | That exact `kubectl` version | `1.36.5` |
+| `latest` | The newest supported minor version | Same as `1.37` |
+
+Images are rebuilt every week and on every change to this repository. New
+`kubectl` patch releases and Alpine security updates are picked up
+automatically. When a new Kubernetes minor version is released, it is added and
+the oldest one stops being rebuilt. Its existing tags stay available but no
+longer get updates.
+
+Use an exact `<major>.<minor>.<patch>` tag if you need the `kubectl` version to
+stay fixed. The image is still rebuilt weekly, so the Alpine packages in it can
+change.
 
 ## Building it yourself
 
@@ -94,7 +108,7 @@ podman build -t kdbg .
 To use a different `kubectl` version:
 
 ```sh
-podman build --build-arg KUBECTL_VERSION=1.36.0 -t kdbg .
+podman build --build-arg KUBECTL_VERSION=1.36.5 -t kdbg .
 ```
 
 ## License
