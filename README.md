@@ -81,7 +81,7 @@ docker run --rm -it ghcr.io/raqqun/kdbg bash
 | Tag | What it is |
 | --- | --- |
 | `latest` | Built from the latest commit on `master` |
-| `vX.Y.Z` (any git tag) | Built when that git tag is pushed |
+| `vX.Y.Z` | Built when a git tag of that form (e.g. `v1.2.3`) is pushed. Other tag names are not built. |
 
 Use a specific tag if you need the image to stay the same over time.
 
