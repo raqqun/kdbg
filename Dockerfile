@@ -19,7 +19,15 @@ RUN apk add --no-cache bash \
     iproute2 \
     openssl \
     jq \
-    yq-go
+    yq-go \
+    iperf3 \
+    nmap \
+    strace \
+    lsof \
+    procps-ng \
+    conntrack-tools \
+    iptables \
+    nftables
 
 RUN curl -LO https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/${TARGETARCH}/kubectl && \
     mv kubectl /usr/bin/kubectl && \

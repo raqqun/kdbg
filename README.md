@@ -24,6 +24,11 @@ already installed, so you can run it in the cluster and start investigating.
 | `ip`, `ss` | Network setup and sockets | `ip addr` and `ip route` show the pod's network setup. `ss -tlnp` lists open ports and connections. |
 | `openssl` | TLS inspection | `openssl s_client` shows a server's certificates, their expiry and chain, and which hostname is presented. Useful for ingress and webhook certificate problems. |
 | `jq`, `yq` | JSON and YAML filtering | Pick out fields from `kubectl ... -o json` output and API responses. |
+| `iperf3` | Bandwidth testing | Run it in two kdbg pods to measure network speed between them, for example across nodes. |
+| `nmap` | Port scanning | Find what's listening across a range of pods or services, and check that network policies block what they should. |
+| `strace`, `lsof` | System calls and open files | With `kubectl debug --target`, see what another container's process is doing and which files and sockets it has open. |
+| `ps`, `top` (procps) | Full process tools | More detailed process information than the busybox versions. |
+| `conntrack`, `iptables`, `nft` | Connection tracking and firewall rules | When debugging a node, see how kube-proxy routes service traffic and which connections it is tracking. |
 | `kubectl` | The Kubernetes API | Query the cluster from inside it, as the pod's service account. |
 
 Images are built for `linux/amd64` and `linux/arm64`.
@@ -79,6 +84,11 @@ docker run --rm -it ghcr.io/raqqun/kdbg bash
 - **Some tools need extra privileges.** `tcpdump` and `iptraf-ng`, and `ping` or
   `mtr` on some clusters, need the `NET_RAW` or `NET_ADMIN` capabilities. If they fail with a
   permission error, the cluster's security policy is probably blocking them.
+- **Node tools only make sense on a node.** `conntrack`, `iptables` and `nft`
+  show the network rules of wherever kdbg is running. Inside a normal pod that
+  is the pod's own, mostly empty, network. Use them with
+  `kubectl debug node/<node>` to see the node's rules. They also need the
+  `NET_ADMIN` capability.
 
 ## Image tags
 
