@@ -10,17 +10,21 @@ already installed, so you can run it in the cluster and start investigating.
 
 ## What's inside
 
-| Tool | Use it for |
-| --- | --- |
-| `bash` | A comfortable shell |
-| `curl`, `wget` | Testing HTTP endpoints |
-| `dig`, `nslookup`, `host` | Checking DNS resolution |
-| `ping` | Basic reachability |
-| `mtr`, `tcptraceroute` | Tracing the network path to a host |
-| `nc` (netcat), `socat` | Testing raw TCP/UDP ports, relaying traffic |
-| `telnet` and other busybox extras | Quick manual protocol checks |
-| `iptraf-ng` | Watching live traffic on an interface |
-| `kubectl` | Talking to the Kubernetes API from inside the cluster |
+| Tool | What it gives you | Why it helps in a cluster |
+| --- | --- | --- |
+| `bash` | A comfortable shell | Tab completion and history while you poke around. |
+| `curl`, `wget` | HTTP requests | Check whether a service answers and what it returns. |
+| `dig`, `nslookup`, `host` | DNS lookups | Check that service names resolve, and to which IPs. Many "can't connect" problems are really DNS problems. |
+| `ping` | Basic reachability | Quick first check that another pod or node can be reached. |
+| `mtr`, `tcptraceroute` | Network path tracing | Find where along the way traffic to a host gets lost or slows down. |
+| `nc` (netcat), `socat` | Raw TCP/UDP connections | Test whether a port is open, or relay traffic between ports. |
+| `telnet` and other busybox extras | Manual protocol checks | Type commands at a service by hand. |
+| `iptraf-ng` | Live traffic monitor | Watch which connections are active on an interface. |
+| `tcpdump` | Packet capture | See whether traffic actually reaches a pod, and what it looks like. |
+| `ip`, `ss` | Network setup and sockets | `ip addr` and `ip route` show the pod's network setup. `ss -tlnp` lists open ports and connections. |
+| `openssl` | TLS inspection | `openssl s_client` shows a server's certificates, their expiry and chain, and which hostname is presented. Useful for ingress and webhook certificate problems. |
+| `jq`, `yq` | JSON and YAML filtering | Pick out fields from `kubectl ... -o json` output and API responses. |
+| `kubectl` | The Kubernetes API | Query the cluster from inside it, as the pod's service account. |
 
 Images are built for `linux/amd64` and `linux/arm64`.
 
@@ -72,8 +76,8 @@ docker run --rm -it ghcr.io/raqqun/kdbg bash
 
 - **`kubectl` inside the pod** uses the pod's service account. It can only do
   what that account is allowed to do, which by default is very little.
-- **Some tools need extra privileges.** `iptraf-ng`, and `ping` or `mtr` on some
-  clusters, need the `NET_RAW` or `NET_ADMIN` capabilities. If they fail with a
+- **Some tools need extra privileges.** `tcpdump` and `iptraf-ng`, and `ping` or
+  `mtr` on some clusters, need the `NET_RAW` or `NET_ADMIN` capabilities. If they fail with a
   permission error, the cluster's security policy is probably blocking them.
 
 ## Image tags

@@ -14,7 +14,12 @@ RUN apk add --no-cache bash \
     iptraf-ng \
     tcptraceroute \
     socat \
-    busybox-extras
+    busybox-extras \
+    tcpdump \
+    iproute2 \
+    openssl \
+    jq \
+    yq-go
 
 RUN curl -LO https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/${TARGETARCH}/kubectl && \
     mv kubectl /usr/bin/kubectl && \
