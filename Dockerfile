@@ -1,7 +1,7 @@
 FROM alpine:latest
 LABEL maintainer="Alexandros Nikiforidis"
 
-ARG KUBECTL_VERSION=1.18.0
+ARG KUBECTL_VERSION=1.37.1
 
 RUN apk add --no-cache bash \
     curl \
@@ -15,6 +15,6 @@ RUN apk add --no-cache bash \
     socat \
     busybox-extras
 
-RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl && \
+RUN curl -LO https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl && \
     mv kubectl /usr/bin/kubectl && \
     chmod +x /usr/bin/kubectl
