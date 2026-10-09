@@ -7,6 +7,9 @@ on:
       - master
     tags:
       - 'v*.*.*'
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
 
 env:
   REGISTRY: ghcr.io
