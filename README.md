@@ -1,6 +1,10 @@
-# kdbg
+<p align="center">
+  <img src="assets/kdbg.png" alt="kdbg" width="300">
+</p>
 
-A small container image for debugging Kubernetes clusters from the inside.
+<p align="center">
+  <b><i>A small container image for debugging Kubernetes clusters from the inside.</i></b>
+</p>
 
 When something in a cluster can't reach something else (a service won't
 resolve, a port won't answer, traffic is slow), you need a shell next to the
