@@ -33,7 +33,8 @@ jobs:
           major=$(echo "${stable#v}" | cut -d. -f1)
           newest=$(echo "${stable#v}" | cut -d. -f2)
           entries=()
-          for i in $(seq 0 $((SUPPORTED_MINORS - 1))); do
+          # Oldest first, so the newest version is built and published last
+          for i in $(seq $((SUPPORTED_MINORS - 1)) -1 0); do
             minor="${major}.$((newest - i))"
             version=$(curl -fsSL "https://dl.k8s.io/release/stable-${minor}.txt")
             latest=$([ "$i" -eq 0 ] && echo true || echo false)
@@ -51,6 +52,10 @@ jobs:
       packages: write
     strategy:
       fail-fast: false
+      # One at a time, in matrix order. GitHub's package page shows the most
+      # recently published version as the latest, so the newest kubectl
+      # version has to be pushed last.
+      max-parallel: 1
       matrix: ${{ fromJSON(needs.versions.outputs.matrix) }}
     name: build kubectl ${{ matrix.version }}
     steps:
