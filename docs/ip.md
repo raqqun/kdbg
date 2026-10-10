@@ -199,7 +199,8 @@ matches its IP.
 ### Run any command in a pod's network from the node
 
 On a node, `nsenter` runs a command inside another process's network
-namespace. Find the PID of a process in the pod (see [procps](procps.md)),
+namespace. Find the PID of a process in the pod (with
+[crictl](crictl.md#find-a-containers-process), or see [procps](procps.md)),
 then:
 
 ```sh
