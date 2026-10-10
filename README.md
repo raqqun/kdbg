@@ -14,22 +14,25 @@ already installed, so you can run it in the cluster and start investigating.
 | --- | --- | --- |
 | `bash` | A comfortable shell | Tab completion and history while you poke around. |
 | `curl`, `wget` | HTTP requests | Check whether a service answers and what it returns. |
-| `dig`, `nslookup`, `host` | DNS lookups | Check that service names resolve, and to which IPs. Many "can't connect" problems are really DNS problems. |
-| `ping` | Basic reachability | Quick first check that another pod or node can be reached. |
-| `mtr`, `tcptraceroute` | Network path tracing | Find where along the way traffic to a host gets lost or slows down. |
-| `nc` (netcat), `socat` | Raw TCP/UDP connections | Test whether a port is open, or relay traffic between ports. |
-| `telnet` and other busybox extras | Manual protocol checks | Type commands at a service by hand. |
-| `iptraf-ng` | Live traffic monitor | Watch which connections are active on an interface. |
-| `tcpdump` | Packet capture | See whether traffic actually reaches a pod, and what it looks like. |
-| `ip`, `ss` | Network setup and sockets | `ip addr` and `ip route` show the pod's network setup. `ss -tlnp` lists open ports and connections. |
-| `openssl` | TLS inspection | `openssl s_client` shows a server's certificates, their expiry and chain, and which hostname is presented. Useful for ingress and webhook certificate problems. |
+| [`dig`, `nslookup`, `host`](docs/dns.md) | DNS lookups | Check that service names resolve, and to which IPs. Many "can't connect" problems are really DNS problems. |
+| [`ping`](docs/ping.md) | Basic reachability | Quick first check that another pod or node can be reached. |
+| [`mtr`](docs/mtr.md), [`tcptraceroute`](docs/tcptraceroute.md) | Network path tracing | Find where along the way traffic to a host gets lost or slows down. |
+| [`nc`](docs/nc.md) (netcat), [`socat`](docs/socat.md) | Raw TCP/UDP connections | Test whether a port is open, or relay traffic between ports. |
+| [`telnet` and other busybox extras](docs/telnet.md) | Manual protocol checks | Type commands at a service by hand. |
+| [`iptraf-ng`](docs/iptraf-ng.md) | Live traffic monitor | Watch which connections are active on an interface. |
+| [`tcpdump`](docs/tcpdump.md) | Packet capture | See whether traffic actually reaches a pod, and what it looks like. |
+| [`ip`](docs/ip.md), [`ss`](docs/ss.md) | Network setup and sockets | `ip addr` and `ip route` show the pod's network setup. `ss -tlnp` lists open ports and connections. |
+| [`openssl`](docs/openssl.md) | TLS inspection | `openssl s_client` shows a server's certificates, their expiry and chain, and which hostname is presented. Useful for ingress and webhook certificate problems. |
 | `jq`, `yq` | JSON and YAML filtering | Pick out fields from `kubectl ... -o json` output and API responses. |
-| `iperf3` | Bandwidth testing | Run it in two kdbg pods to measure network speed between them, for example across nodes. |
-| `nmap` | Port scanning | Find what's listening across a range of pods or services, and check that network policies block what they should. |
-| `strace`, `lsof` | System calls and open files | With `kubectl debug --target`, see what another container's process is doing and which files and sockets it has open. |
-| `ps`, `top` (procps) | Full process tools | More detailed process information than the busybox versions. |
-| `conntrack`, `iptables`, `nft` | Connection tracking and firewall rules | When debugging a node, see how kube-proxy routes service traffic and which connections it is tracking. |
+| [`iperf3`](docs/iperf3.md) | Bandwidth testing | Run it in two kdbg pods to measure network speed between them, for example across nodes. |
+| [`nmap`](docs/nmap.md) | Port scanning | Find what's listening across a range of pods or services, and check that network policies block what they should. |
+| [`strace`](docs/strace.md), [`lsof`](docs/lsof.md) | System calls and open files | With `kubectl debug --target`, see what another container's process is doing and which files and sockets it has open. |
+| [`ps`, `top` (procps)](docs/procps.md) | Full process tools | More detailed process information than the busybox versions. |
+| [`conntrack`](docs/conntrack.md), [`iptables`](docs/iptables.md), [`nft`](docs/nft.md) | Connection tracking and firewall rules | When debugging a node, see how kube-proxy routes service traffic and which connections it is tracking. |
 | `kubectl` | The Kubernetes API | Query the cluster from inside it, as the pod's service account. |
+
+Linked tools have a guide in [docs](docs/README.md) covering common
+commands, how to read their output, and what to watch out for in a cluster.
 
 Images are built for `linux/amd64` and `linux/arm64`.
 
