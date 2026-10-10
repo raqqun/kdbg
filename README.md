@@ -108,7 +108,7 @@ minor version of itself.
 | `<major>.<minor>.<patch>` | That exact `kubectl` version | `1.36.5` |
 | `latest` | The newest supported minor version | Same as `1.37` |
 
-Each image has the `crictl` release for the same minor version. A new
+Each image has the newest `crictl` release for the same minor version. A new
 Kubernetes minor version can come out before its `crictl` release, so until
 it's published, the image has the previous minor version's `crictl`.
 
@@ -128,10 +128,10 @@ change.
 podman build -t kdbg .
 ```
 
-To use a different `kubectl` version (`crictl` follows its minor version):
+To use a different `kubectl` or `crictl` version:
 
 ```sh
-podman build --build-arg KUBECTL_VERSION=1.36.5 -t kdbg .
+podman build --build-arg KUBECTL_VERSION=1.36.5 --build-arg CRICTL_VERSION=1.36.0 -t kdbg .
 ```
 
 ## License

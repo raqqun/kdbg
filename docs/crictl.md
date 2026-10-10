@@ -6,7 +6,7 @@ pods, containers and images the runtime has on that node, and lets you read
 their logs, run commands in them and pull images, without going through the
 Kubernetes API.
 
-kdbg's `crictl` comes from the cri-tools release matching its `kubectl` minor
+kdbg's `crictl` is the newest cri-tools release for its `kubectl` minor
 version, and is set up for `kubectl debug node/`. See
 [How kdbg sets it up](#how-kdbg-sets-it-up).
 
