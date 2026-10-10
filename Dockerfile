@@ -2,6 +2,7 @@ FROM alpine:latest
 LABEL maintainer="Alexandros Nikiforidis"
 
 ARG KUBECTL_VERSION=1.37.1
+ARG CRICTL_VERSION=1.37.0
 ARG TARGETARCH
 
 RUN apk add --no-cache bash \
@@ -32,3 +33,10 @@ RUN apk add --no-cache bash \
 RUN curl -LO https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/${TARGETARCH}/kubectl && \
     mv kubectl /usr/bin/kubectl && \
     chmod +x /usr/bin/kubectl
+
+# The defaults suit kubectl debug node/, which mounts the node at /host:
+# crictl talks to the node's containerd, and finds the logs it reads itself.
+RUN curl -fsSL https://github.com/kubernetes-sigs/cri-tools/releases/download/v${CRICTL_VERSION}/crictl-v${CRICTL_VERSION}-linux-${TARGETARCH}.tar.gz | \
+    tar -xz -o -C /usr/bin crictl && \
+    echo 'runtime-endpoint: unix:///host/run/containerd/containerd.sock' > /etc/crictl.yaml && \
+    ln -s /host/var/log/pods /var/log/pods
