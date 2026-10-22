@@ -26,22 +26,31 @@ jobs:
     outputs:
       matrix: ${{ steps.resolve.outputs.matrix }}
     steps:
-      - name: Resolve kubectl versions
+      - name: Resolve kubectl and crictl versions
         id: resolve
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           stable=$(curl -fsSL https://dl.k8s.io/release/stable.txt)
           major=$(echo "${stable#v}" | cut -d. -f1)
           newest=$(echo "${stable#v}" | cut -d. -f2)
+          crictl_releases=$(gh api 'repos/kubernetes-sigs/cri-tools/releases?per_page=100' \
+            -q '.[] | select((.draft or .prerelease) | not) | .tag_name | ltrimstr("v")')
           entries=()
           # Oldest first, so the newest version is built and published last
           for i in $(seq $((SUPPORTED_MINORS - 1)) -1 0); do
             minor="${major}.$((newest - i))"
             version=$(curl -fsSL "https://dl.k8s.io/release/stable-${minor}.txt")
+            # The newest crictl release for this minor version. cri-tools is
+            # released a few weeks after Kubernetes, so until then, the newest
+            # release of an earlier minor version.
+            crictl=$(echo "$crictl_releases" | awk -F. -v major="$major" -v minor="$((newest - i))" \
+              '$1 == major && $2 <= minor' | sort -V | tail -1)
             latest=$([ "$i" -eq 0 ] && echo true || echo false)
-            echo "kubectl ${minor} -> ${version#v}"
-            entries+=("$(jq -nc --arg minor "$minor" --arg version "${version#v}" --argjson latest "$latest" \
-              '{minor: $minor, version: $version, latest: $latest}')")
+            echo "kubectl ${minor} -> ${version#v}, crictl ${crictl}"
+            entries+=("$(jq -nc --arg minor "$minor" --arg version "${version#v}" --arg crictl "$crictl" --argjson latest "$latest" \
+              '{minor: $minor, version: $version, crictl: $crictl, latest: $latest}')")
           done
           echo "matrix=$(printf '%s\n' "${entries[@]}" | jq -sc '{include: .}')" >> "$GITHUB_OUTPUT"
 
@@ -93,7 +102,9 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          build-args: KUBECTL_VERSION=${{ matrix.version }}
+          build-args: |
+            KUBECTL_VERSION=${{ matrix.version }}
+            CRICTL_VERSION=${{ matrix.crictl }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha,scope=kubectl-${{ matrix.minor }}
