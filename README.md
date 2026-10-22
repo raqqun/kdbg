@@ -29,6 +29,7 @@ already installed, so you can run it in the cluster and start investigating.
 | [`strace`](docs/strace.md), [`lsof`](docs/lsof.md) | System calls and open files | With `kubectl debug --target`, see what another container's process is doing and which files and sockets it has open. |
 | [`ps`, `top` (procps)](docs/procps.md) | Full process tools | More detailed process information than the busybox versions. |
 | [`conntrack`](docs/conntrack.md), [`iptables`](docs/iptables.md), [`nft`](docs/nft.md) | Connection tracking and firewall rules | When debugging a node, see how kube-proxy routes service traffic and which connections it is tracking. |
+| [`crictl`](docs/crictl.md) | Container runtime client | When debugging a node, list its pods and containers, read their logs and test image pulls straight from containerd or CRI-O, even when the API server or kubelet is unhealthy. |
 | `kubectl` | The Kubernetes API | Query the cluster from inside it, as the pod's service account. |
 
 Linked tools have a guide in [docs](docs/README.md) covering common
@@ -91,7 +92,8 @@ docker run --rm -it ghcr.io/raqqun/kdbg bash
   show the network rules of wherever kdbg is running. Inside a normal pod that
   is the pod's own, mostly empty, network. Use them with
   `kubectl debug node/<node>` to see the node's rules. They also need the
-  `NET_ADMIN` capability.
+  `NET_ADMIN` capability. `crictl` only works in `kubectl debug node/<node>`,
+  where it finds the node's container runtime under `/host`.
 
 ## Image tags
 
@@ -105,6 +107,10 @@ minor version of itself.
 | `<major>.<minor>` | The latest patch release of that minor version | `1.36` |
 | `<major>.<minor>.<patch>` | That exact `kubectl` version | `1.36.5` |
 | `latest` | The newest supported minor version | Same as `1.37` |
+
+Each image has the newest `crictl` release for the same minor version. A new
+Kubernetes minor version can come out before its `crictl` release, so until
+it's published, the image has the previous minor version's `crictl`.
 
 Images are rebuilt every week and on every change to this repository. New
 `kubectl` patch releases and Alpine security updates are picked up
@@ -122,10 +128,10 @@ change.
 podman build -t kdbg .
 ```
 
-To use a different `kubectl` version:
+To use a different `kubectl` or `crictl` version:
 
 ```sh
-podman build --build-arg KUBECTL_VERSION=1.36.5 -t kdbg .
+podman build --build-arg KUBECTL_VERSION=1.36.5 --build-arg CRICTL_VERSION=1.36.0 -t kdbg .
 ```
 
 ## License

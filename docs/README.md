@@ -19,6 +19,7 @@ widely used and already have good documentation of their own.
 | TLS errors, wrong or expired certificates | [openssl](openssl.md) |
 | What ports is this pod listening on, what is it connected to? | [ss](ss.md), [lsof](lsof.md) |
 | A process hangs, crashes or misbehaves | [strace](strace.md), [procps](procps.md), [lsof](lsof.md) |
+| A node is `NotReady`, or kubectl can't show a pod's containers or logs | [crictl](crictl.md) |
 | How does a Service get routed to its pods on this node? | [iptables](iptables.md), [nft](nft.md), [conntrack](conntrack.md) |
 | You want to type a protocol by hand | [nc](nc.md), [telnet](telnet.md) |
 | You need to forward or relay a port, or watch the traffic going through it | [socat](socat.md) |
@@ -63,6 +64,11 @@ widely used and already have good documentation of their own.
 - [iptables](iptables.md): kube-proxy's iptables rules
 - [nft](nft.md): nftables rules, including kube-proxy's nftables mode
 - [conntrack](conntrack.md): connection tracking table
+
+**Node runtime**
+
+- [crictl](crictl.md): pods, containers, logs and images, straight from the
+  container runtime
 
 ## Before you start
 
