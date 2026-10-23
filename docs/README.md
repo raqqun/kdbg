@@ -88,13 +88,18 @@ see how the node routes traffic, use `kubectl debug node/<node>`.
 
 ### Privileges
 
-Many tools here need Linux capabilities that pods don't get by default:
+Many tools here need Linux capabilities that a pod may not have:
 
 | Capability | Needed by |
 | --- | --- |
 | `NET_RAW` | `tcpdump`, `iptraf-ng`, `mtr`, `tcptraceroute`, nmap's default SYN scan, UDP scan and OS detection, and `ping` on some clusters |
 | `NET_ADMIN` | `iptables`, `nft`, `conntrack`, `ss -K`, changing anything with `ip` |
 | `SYS_PTRACE` | `strace`, and `lsof` or `ps` details for processes owned by another user |
+
+Whether a pod has `NET_RAW` depends on the cluster. containerd gives it to
+containers by default, but CRI-O doesn't, and the `restricted` Pod Security
+level makes pods drop it. `NET_ADMIN` and `SYS_PTRACE` are never there by
+default.
 
 To check which ones you have, run this inside kdbg:
 

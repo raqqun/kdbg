@@ -63,19 +63,21 @@ To debug a specific pod, add kdbg to it as an ephemeral container. It shares
 the pod's network, so `localhost` is the pod's own `localhost`:
 
 ```sh
-kubectl debug -it <pod> --image=ghcr.io/raqqun/kdbg --target=<container> -- bash
+kubectl debug -it <pod> --image=ghcr.io/raqqun/kdbg --target=<container> --profile=general -- bash
 ```
 
-`--target` also lets you see the target container's processes.
+`--target` also lets you see the target container's processes, and the
+`general` profile lets you trace them with `strace`. For packet capture, use
+`--profile=netadmin` instead. See [Things to know](#things-to-know).
 
 ### Debug a node
 
 ```sh
-kubectl debug node/<node> -it --image=ghcr.io/raqqun/kdbg -- bash
+kubectl debug node/<node> -it --image=ghcr.io/raqqun/kdbg --profile=sysadmin -- bash
 ```
 
-This runs kdbg on the node with the host's network. The node's filesystem is
-mounted at `/host`.
+This runs kdbg on the node, fully privileged, with the host's network and
+processes. The node's filesystem is mounted at `/host`.
 
 ### Run it locally
 
@@ -89,9 +91,16 @@ docker run --rm -it ghcr.io/raqqun/kdbg bash
 
 - **`kubectl` inside the pod** uses the pod's service account. It can only do
   what that account is allowed to do, which by default is very little.
-- **Some tools need extra privileges.** `tcpdump` and `iptraf-ng`, and `ping` or
-  `mtr` on some clusters, need the `NET_RAW` or `NET_ADMIN` capabilities. If they fail with a
-  permission error, the cluster's security policy is probably blocking them.
+- **Some tools need extra privileges.** `tcpdump`, `iptraf-ng`, `mtr`,
+  `tcptraceroute`, nmap's default scan and usually `ping` need `NET_RAW`,
+  which not every cluster gives pods by default. `strace` needs `SYS_PTRACE`.
+  With `kubectl debug`, `--profile=general` adds `SYS_PTRACE`,
+  `--profile=netadmin` adds `NET_ADMIN` and `NET_RAW`, and `--profile=sysadmin`
+  runs fully privileged. Always pass `--profile`, because its default has
+  changed between `kubectl` versions. If a tool fails with a permission error,
+  the cluster's security policy may also be blocking it. See
+  [Privileges](docs/README.md#privileges) to check which capabilities you have,
+  and to add them with `kubectl run`.
 - **Node tools only make sense on a node.** `conntrack`, `iptables` and `nft`
   show the network rules of wherever kdbg is running. Inside a normal pod that
   is the pod's own, mostly empty, network. Use them with
